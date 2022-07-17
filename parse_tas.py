@@ -5,6 +5,10 @@ from sys    import argv
 from time   import time
 
 
+# NOTE: sc must be configured to store tick data: 
+# https://www.sierrachart.com/index.php?page=doc/TickbyTickDataConfiguration.php
+
+
 class intraday_rec(IntEnum):
 
     timestamp   = 0
