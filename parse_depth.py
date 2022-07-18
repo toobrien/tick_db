@@ -1,8 +1,8 @@
 from enum   import IntEnum
-from os     import SEEK_CUR
 from struct import calcsize, Struct
 from sys    import argv
 from time   import time
+from typing import BinaryIO, List
 
 
 # NOTE: sc must be configured to record market depth data:
@@ -34,34 +34,38 @@ class depth_cmd(IntEnum):
     del_ask_lvl = 7
 
 
-def parse(fn: str, checkpoint: int):
+HEADER_FMT  = "4I48c"
+HEADER_LEN  = calcsize(HEADER_FMT)
+
+DEPTH_REC_FMT    = "qBBHfII"
+DEPTH_REC_LEN    = calcsize(DEPTH_REC_FMT)
+DEPTH_REC_UNPACK = Struct(DEPTH_REC_FMT).unpack_from
+
+
+def parse(fd: BinaryIO, checkpoint: int) -> List:
 
     # format string spec:   https://docs.python.org/3/library/struct.html#struct.unpack
     # file spec:            https://www.sierrachart.com/index.php?page=doc/MarketDepthDataFileFormat.html
 
-    header_fmt  = "4I48c"
-    header_len  = calcsize(header_fmt)
 
-    depth_rec_fmt    = "qBBHfII"
-    depth_rec_len    = calcsize(depth_rec_fmt)
-    depth_rec_unpack = Struct(depth_rec_fmt).unpack_from
+    '''
+    if (checkpoint <= 0):
+    
+        header_bytes    = fd.read(HEADER_LEN)
+        header          = Struct(HEADER_FMT).unpack_from(header_bytes)
+    '''
 
-    with open(fn, "rb") as fd:
+    fd.seek(HEADER_LEN + checkpoint * DEPTH_REC_LEN)
 
-        header_bytes    = fd.read(header_len)
-        header          = Struct(header_fmt).unpack_from(header_bytes)
+    depth_recs = []
 
-        fd.seek(checkpoint * depth_rec_len, SEEK_CUR)
+    while depth_rec_bytes := fd.read(DEPTH_REC_LEN):
 
-        num_recs = 0
+        dr = DEPTH_REC_UNPACK(depth_rec_bytes)
 
-        while depth_rec_bytes := fd.read(depth_rec_len):
+        depth_recs.append(dr)
 
-            dr = depth_rec_unpack(depth_rec_bytes)
-
-            num_recs += 1
-
-    print(f"num_recs: {num_recs}")
+    print(f"num_recs: {len(depth_recs)}")
 
 if __name__ == "__main__":
 
@@ -69,9 +73,12 @@ if __name__ == "__main__":
     contract    = argv[2]
     date        = argv[3]
     checkpoint  = int(argv[4])
+    fn          = f"{sc_root}/SierraChart/Data/MarketDepthData/{contract}.{date}.depth"
 
     start = time()
-
-    parse(f"{sc_root}/SierraChart/Data/MarketDepthData/{contract}.{date}.depth", checkpoint)
+    
+    with open(fn, "rb") as fd:
+        
+        parse(fd, checkpoint)
 
     print(f"finished: {time() - start:0.1f}s")

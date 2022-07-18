@@ -1,8 +1,8 @@
 from enum   import IntEnum
-from os     import SEEK_CUR
 from struct import calcsize, Struct
 from sys    import argv
 from time   import time
+from typing import BinaryIO, List
 
 
 # NOTE: sc must be configured to store tick data: 
@@ -29,50 +29,59 @@ class tas_rec(IntEnum):
     side        = 3
 
 
-def parse(fn: str, checkpoint: int):
+HEADER_FMT  = "4cIIHHI36c"
+HEADER_LEN  = calcsize(HEADER_FMT)
+
+INTRADAY_REC_FMT    = "q4f4I"
+INTRADAY_REC_LEN    = calcsize(INTRADAY_REC_FMT)
+INTRADAY_REC_UNPACK = Struct(INTRADAY_REC_FMT).unpack_from
+
+
+def parse(fd: BinaryIO, checkpoint: int) -> List:
 
     # format string spec:   https://docs.python.org/3/library/struct.html#struct.unpack
     # file spec:            https://www.sierrachart.com/index.php?page=doc/IntradayDataFileFormat.html
 
-    header_fmt  = "4cIIHHI36c"
-    header_len  = calcsize(header_fmt)
-
-    intraday_rec_fmt    = "q4f4I"
-    intraday_rec_len    = calcsize(intraday_rec_fmt)
-    intraday_rec_unpack = Struct(intraday_rec_fmt).unpack_from
-
     tas_recs = []
 
-    with open(fn, "rb") as fd:
+    '''
+    if (checkpoint <= 0):
+    
+        header_bytes    = fd.read(HEADER_LEN)
+        header          = Struct(HEADER_FMT).unpack_from(header_bytes)
+    '''
 
-        header_bytes    = fd.read(header_len)
-        header          = Struct(header_fmt).unpack_from(header_bytes)
+    fd.seek(HEADER_LEN + checkpoint * INTRADAY_REC_LEN)
 
-        fd.seek(checkpoint * intraday_rec_len, SEEK_CUR)
+    while intraday_rec_bytes := fd.read(INTRADAY_REC_LEN):
 
-        while intraday_rec_bytes := fd.read(intraday_rec_len):
+        ir = INTRADAY_REC_UNPACK(intraday_rec_bytes)
 
-            ir = intraday_rec_unpack(intraday_rec_bytes)
+        tas_rec = (
+            ir[intraday_rec.timestamp],
+            ir[intraday_rec.close],
+            ir[intraday_rec.bid_vol] if ir[intraday_rec.bid_vol] else ir[intraday_rec.ask_vol],
+            0 if ir[intraday_rec.bid_vol] > 0 else 1
+        )
 
-            tas_rec = (
-                ir[intraday_rec.timestamp],
-                ir[intraday_rec.close],
-                ir[intraday_rec.bid_vol] if ir[intraday_rec.bid_vol] else ir[intraday_rec.ask_vol],
-                0 if ir[intraday_rec.bid_vol] > 0 else 1
-            )
-
-            tas_recs.append(tas_rec)
+        tas_recs.append(tas_rec)
 
     print(f"num_recs: {len(tas_recs)}")
+
+    return tas_recs
+
 
 if __name__ == "__main__":
 
     sc_root     = argv[1]
     contract    = argv[2]
     checkpoint  = int(argv[3])
+    fn          = f"{sc_root}/SierraChart/Data/{contract}.scid"
 
     start = time()
 
-    parse(f"{sc_root}/SierraChart/Data/{contract}.scid", checkpoint)
+    with open(fn, "rb") as fd:
+    
+        parse(fd, checkpoint)
 
     print(f"finished: {time() - start:0.1f}s")
