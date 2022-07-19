@@ -25,8 +25,8 @@ if __name__ == "__main__":
 
     sc_root     = argv[1]
     contract    = argv[2]
-    price_adj   = int(argv[3])
-    checkpoint  = int(argv[4])
+    price_adj   = int(argv[3])      # raw records are unadjusted. they will be divided by this price.
+    checkpoint  = int(argv[4])      # start reading at this record
     fn          = f"{sc_root}/SierraChart/Data/{contract}.scid"
       
     with open(fn, "rb") as fd:
