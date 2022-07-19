@@ -2,7 +2,7 @@ This repository contains tools for parsing time and sales records as well as mar
 
 ### Time and Sales
 
-Sierra chart does not store time and sales records per se, but OHLC values. It stores these "intraday data files" in `/Data`. They have a `.scid` extension. When Sierra Chart is configured to store one trade per bar in these intraday files, they effectively become time and sales records. `parse_tas.py` converts these one-trade intraday records into time and sales records with a timestamp, price, quantity, and side (0 = at bid, 1 = at ask) fields.
+Sierra chart does not store time and sales records per se, but OHLC values. It stores these "intraday data files" in `/Data`. They have a `.scid` extension. When Sierra Chart is configured to store one trade per bar in these intraday files, they effectively become time and sales records. `parsers.parse_tas` converts these one-trade intraday records into time and sales records with a timestamp, price, quantity, and side (0 = at bid, 1 = at ask) fields.
 
 Read more about the intraday data files here: 
 
@@ -22,4 +22,4 @@ See also:
 
 https://www.sierrachart.com/index.php?page=doc/StudiesReference.php&ID=375#DownloadingOfHistoricalMarketDepthData
 
-Depth records contain commands to modify the state of an order book. For example, adding bids, deleting offers, and so on. Cumulatively applying the commands results in the correct state of the order book, up through the latest record processed. Sierra Chart allows you to download the last 30 days of market depth data.
+Depth records contain commands to modify the state of an order book. For example, adding bids, deleting offers, and so on. Cumulatively applying the commands results in the correct state of the order book, up through the latest record processed. Sierra Chart allows you to download the last 30 days of market depth data. Depth records are parsed by `parsers.parse_depth`.
