@@ -29,6 +29,7 @@ Depth records contain commands to modify the state of an order book. For example
 You can keep `.scid` files up to date simply by connecting to a data feed once per day. Sierra Chart will download any missing records as far back as `Maximum Historical Intraday Days to Download`, provided the symbol you are interested in is open in a chart or DOM.
 
 https://www.sierrachart.com/index.php?page=doc/DataSourceSettings.php#MaximumHistoricalIntradayDaysToDownloadSection
+
 https://www.sierrachart.com/index.php?page=doc/HistoricalIntradayData.html#RetryingDownloadingOfIntradayData
 
 After the download is complete, you can force Sierra Chart to flush new, incoming records to disk using the `Intraday File Flush Time in Milliseconds` setting. By default, they are written every five seconds:
