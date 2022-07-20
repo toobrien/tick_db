@@ -1,0 +1,13 @@
+{
+    "CONTRACTS": {
+        "ESU22_FUT_CME": {
+            "checkpoint": 0,
+            "price_adj": 0.01,
+            "tas": true,
+            "depth": false
+        }
+    },
+    "DB_PATH": "./tick.db",
+    "SC_ROOT": "/Volumes/[C] Windows 10",
+    "SLEEP_INT": 0.1
+}
