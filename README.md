@@ -40,7 +40,7 @@ https://www.sierrachart.com/index.php?page=doc/IntradayDataFileFormat.html#Gener
 
 To find this database useful, you will need to solve a few problems:
 
-1. You need to edit `config.json` to include any contracts you are interested in adding to the database. You need to know the symbol name, as it appears in Sierra Chart, and the price multipllier. The latter is found under `Chart` -> `Chart Settings` -> `Real Time Price Multiplier`.
+1. You need to edit `config.json` to include any contracts you are interested in adding to the database. You need to know the symbol name, as it appears in Sierra Chart, and the price multiplier. The latter is found under `Chart` -> `Chart Settings` -> `Real Time Price Multiplier`.
 
 Note: while tick data is available for years, market depth is only available for 30 days. Basically, you have a 30 day window to get the configuration right if you don't want to miss records going forward.
 
