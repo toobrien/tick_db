@@ -1,10 +1,14 @@
 {
     "CONTRACTS": {
         "ESU22_FUT_CME": {
-            "checkpoint": 0,
+            "checkpoint_tas": 0,
+            "ceckpoint_depth": {
+                "date": "",
+                "rec":   0
+            },
             "price_adj": 0.01,
             "tas": true,
-            "depth": false
+            "depth": true
         }
     },
     "DB_PATH": "./tick.db",
