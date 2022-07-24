@@ -141,7 +141,7 @@ async def etl_depth_coro(
 
                 break
 
-    return ( con_id, checkpoint )
+    return ( file, checkpoint )
 
 
 async def etl_depth(loop: int):
@@ -184,14 +184,7 @@ async def etl_depth(loop: int):
 
         results = await gather(coros)
 
-        for res in results:
-
-            con_id = res[0]
-            rec    = res[1]
-
-            if rec != -1:
-
-                CONFIG["contracts"][con_id]["checkpoint_depth"]["rec"] = rec
+        CONFIG["contracts"][con_id]["checkpoint_depth"]["rec"] = results[-1][1]
 
 
 async def main():
@@ -209,5 +202,3 @@ async def main():
 
 
 run(main())
-
-
