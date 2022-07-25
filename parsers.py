@@ -1,8 +1,13 @@
-from enum   import IntEnum
-from struct import calcsize, Struct
-from sys    import argv
-from time   import time
-from typing import BinaryIO, List
+from datetime   import datetime
+from enum       import IntEnum
+from numpy      import datetime64, timedelta64
+from struct     import calcsize, Struct
+from sys        import argv
+from time       import time
+from typing     import BinaryIO, List
+
+
+SC_EPOCH    = datetime64("1899-12-30")
 
 
 # TIME AND SALES
@@ -72,6 +77,22 @@ def parse_tas(fd: BinaryIO, checkpoint: int) -> List:
         tas_recs.append(tas_rec)
 
     return tas_recs
+
+
+def transform_tas(rs: List, price_adj: float):
+
+    # - truncate microsecond int64 to millisecond datestring
+    # - adjust price using "real-time price multiplier"
+
+    return [
+        (
+            (SC_EPOCH + timedelta64(r[tas_rec.timestamp], "us")).astype(datetime).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            r[tas_rec.price] * price_adj,
+            r[tas_rec.qty],
+            r[tas_rec.side]
+        )
+        for r in rs
+    ]
 
 
 # MARKET DEPTH
@@ -145,6 +166,25 @@ def parse_depth(fd: BinaryIO, checkpoint: int) -> List:
         depth_recs.append(dr)
 
     return depth_recs
+
+
+def transform_depth(rs: List, price_adj: float):
+
+    # - truncate microsecond int64 to millisecond datestring
+    # - adjust price using "real-time price multiplier"
+    # - delete "reserved" value from record
+
+    return [
+        (
+            (SC_EPOCH + timedelta64(r[depth_rec.timestamp], "us")).astype(datetime).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            r[depth_rec.command],
+            r[depth_rec.flags],
+            r[depth_rec.num_orders],
+            r[depth_rec.price] * price_adj,
+            r[depth_rec.quantity]
+        )
+        for r in rs
+    ]
 
 
 if __name__ == "__main__":

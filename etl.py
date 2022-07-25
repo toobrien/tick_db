@@ -1,16 +1,13 @@
 from asyncio    import gather, run, sleep
 from db         import load_depth, load_tas
-from datetime   import datetime
 from json       import dumps, loads
-from numpy      import datetime64, timedelta64
 from os         import walk
-from parsers    import depth_rec, parse_depth, parse_depth_header, parse_tas, parse_tas_header, tas_rec
+from parsers    import parse_depth, parse_depth_header, parse_tas, parse_tas_header, transform_tas, transform_depth
 from re         import match
 from sys        import argv
 from typing     import List
 
 
-SC_EPOCH    = datetime64("1899-12-30")
 CONFIG      = loads(open("./config.json").read())
 CONTRACTS   = CONFIG["CONTRACTS"]
 SLEEP_INT   = CONFIG["SLEEP_INT"]
@@ -20,17 +17,6 @@ SC_ROOT     = CONFIG["SC_ROOT"]
 ################
 # TIME AND SALES
 ################
-
-
-def transform_tas(rs: List, price_adj: float):
-
-    for r in rs:
-
-        # truncate microsecond int64 to millisecond datestring
-
-        r[tas_rec.timestamp]    = (SC_EPOCH + timedelta64(r[tas_rec.timestamp], "us")).astype(datetime).strftime("%Y-%m-%d %H:%M:%S.%f")
-        r[tas_rec.price]        *= price_adj
-        r[tas_rec.side]         = "bid" if r[tas_rec.side] == 0 else "ask"
 
 
 async def etl_tas_coro(
@@ -94,18 +80,6 @@ async def etl_tas(loop: int):
 ##############
 # MARKET DEPTH
 ##############
-
-
-def transform_depth(rs: List, price_adj: float):
-
-    for r in rs:
-
-        # truncate microsecond int64 to millisecond datestring
-        # delete "reserved" value from record
-
-        r[depth_rec.timestamp]  =   (SC_EPOCH + timedelta64(r[depth_rec.timestamp], "us")).astype(datetime).strftime("%Y-%m-%d %H:%M:%S.%f")
-        r[depth_rec.price]      *=  price_adj
-        del r[-1]
 
 
 async def etl_depth_coro(

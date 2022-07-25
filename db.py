@@ -47,7 +47,7 @@ def load_tas(con_id: str, rs: List):
                     timestamp   TEXT,
                     price       REAL,
                     qty         INTEGER,
-                    side        TEXT
+                    side        INTEGER
                 )
             """
         )
