@@ -5,7 +5,8 @@ path.append("../tick_db")
 from bisect     import bisect_left
 from enum       import IntEnum
 from json       import loads
-from parsers    import parse_tas, parse_tas_header, tas_rec, transform_tas
+from numpy      import datetime64, timedelta64
+from parsers    import parse_tas, parse_tas_header, tas_rec
 from time       import sleep, time
 from typing     import List
 
@@ -33,18 +34,33 @@ UP_ROTATION_VOLUME  = 0
 DN_ROTATION_VOLUME  = 0
 
 
+def to_sc_ts(dt: str):
+
+    return (datetime64(dt) - datetime64("1899-12-30")) / timedelta64(1, "us")
+
+
 def get_rotations(
     recs:           List,
+    price_adj:      float,
     min_rotation:   int,
     tick_size:      float
 ):
+
+    global ROTATION_SIDE
+    global ROTATION_HIGH
+    global ROTATION_LOW
+    global ROTATION_LENGTH
+    global UP_ROTATION_DELTA
+    global DN_ROTATION_DELTA
+    global UP_ROTATION_VOLUME
+    global DN_ROTATION_VOLUME
 
     res           = []
     prev_rotation = [ 0, "", 0, 0, 0 ]
 
     for rec in recs:
 
-        price = rec[tas_rec.price]
+        price = rec[tas_rec.price] * price_adj
         qty   = rec[tas_rec.qty]
         side  = rec[tas_rec.side]
 
@@ -139,7 +155,7 @@ def get_rotations(
 
 if __name__ == "__main__":
 
-    start = time()
+    t0 = time()
 
     fn              = argv[1]
     rotation_ticks  = int(argv[2])
@@ -151,6 +167,8 @@ if __name__ == "__main__":
 
     rotations = []
 
+    adj_date = to_sc_ts(start_date) if start_date != "-" else None
+
     with open(f"{SC_ROOT}/SierraChart/Data/{fn}.scid", "rb") as fd:
 
         parse_tas_header(fd)
@@ -159,17 +177,13 @@ if __name__ == "__main__":
 
             res = parse_tas(fd, to_seek)
 
-            print(f"elapsed (parse): {time() - start:0.2f}")
+            print(f"elapsed (parse): {time() - t0:0.2f}")
 
-            transform_tas(res, price_adj)
+            start = bisect_left(res, adj_date, key = lambda r: r[tas_rec.timestamp]) if start_date != "-" else 0
 
-            print(f"elapsed (transform): {time() - start:0.2f}")
+            rotations = get_rotations(res[start:], price_adj, rotation_ticks, tick_size)
 
-            start = bisect_left(res, start_date)
-
-            rotations = get_rotations(res[start:], rotation_ticks, tick_size)
-
-            print(f"elapsed (rotations): {time() - start:0.2f}")
+            print(f"elapsed (rotations): {time() - t0:0.2f}")
 
             for rotation in rotations[-10:]:
 
@@ -184,5 +198,8 @@ if __name__ == "__main__":
             else:
 
                 break
-
-    print(f"elapsed (all): {time() - start:0.2f}")
+    
+    print(f"len(res): {len(res)}")
+    print(f"started from: {start}")
+    print(f"len(rotations): {len(rotations)}")
+    print(f"elapsed (all): {time() - t0:0.2f}")

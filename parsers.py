@@ -7,7 +7,7 @@ from time       import time
 from typing     import BinaryIO, List
 
 
-SC_EPOCH    = datetime64("1899-12-30")
+SC_EPOCH = datetime64("1899-12-30")
 
 
 # TIME AND SALES
