@@ -1,4 +1,4 @@
-from sys        import argv, path
+from sys import argv, path
 
 path.append("../tick_db")
 
@@ -36,9 +36,9 @@ UP_ROTATION_VOLUME  = 0
 DN_ROTATION_VOLUME  = 0
 
 
-def to_sc_ts(dt: str):
+def to_sc_ts(ts: str):
 
-    return (datetime64(dt) - datetime64("1899-12-30")) / timedelta64(1, "us")
+    return ts + (datetime64("1899-12-30", unit = "us"))
 
 
 def get_rotations(
@@ -187,7 +187,7 @@ if __name__ == "__main__":
 
             print(f"elapsed (rotations): {time() - t0:0.2f}")
 
-            if (loop):
+            if loop:
 
                 sleep(SLEEP_INT)
 
