@@ -2,6 +2,8 @@ from sys        import argv, path
 
 path.append("../tick_db")
 
+import plotly.graph_objects as go
+
 from bisect     import bisect_left
 from enum       import IntEnum
 from json       import loads
@@ -181,13 +183,9 @@ if __name__ == "__main__":
 
             start = bisect_left(res, adj_date, key = lambda r: r[tas_rec.timestamp]) if start_date != "-" else 0
 
-            rotations = get_rotations(res[start:], price_adj, rotation_ticks, tick_size)
+            rotations.extend(get_rotations(res[start:], price_adj, rotation_ticks, tick_size))
 
             print(f"elapsed (rotations): {time() - t0:0.2f}")
-
-            for rotation in rotations[-10:]:
-
-                print(rotation)
 
             if (loop):
 
@@ -199,6 +197,32 @@ if __name__ == "__main__":
 
                 break
     
+    # display summaries
+
+    lengths = sorted(
+        [ 
+            r[r_rot.length] for r in rotations
+            if r[r_rot.length] > 0 
+        ]
+    )
+
+    fig = go.Figure(
+        go.Histogram(
+            x = lengths,
+            nbinsx = int(max(lengths))# - rotation_ticks)  # 1 bin per tick
+        )
+    )
+
+    fig.show()
+
+
+
+    print("50%: ", f"{lengths[int(len(lengths) * 0.5)]}")
+    print("70%: ", f"{lengths[int(len(lengths) * 0.75)]}")
+    print("95%: ", f"{lengths[int(len(lengths) * 0.95)]}")
+
+    print("\n")
+
     print(f"len(res): {len(res)}")
     print(f"started from: {start}")
     print(f"len(rotations): {len(rotations)}")

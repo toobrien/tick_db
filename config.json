@@ -1,17 +1,17 @@
 {
-    "CONTRACTS": {
-        "ESU22_FUT_CME": {
-            "checkpoint_tas": 0,
-            "ceckpoint_depth": {
-                "date": "",
-                "rec":   0
-            },
-            "price_adj": 0.01,
-            "tas": true,
-            "depth": true
-        }
-    },
-    "DB_PATH": "./tick.db",
-    "SC_ROOT": "/Volumes/[C] Windows 10",
-    "SLEEP_INT": 0.1
+  "contracts": {
+    "ESU22_FUT_CME": {
+      "checkpoint_tas": 0,
+      "checkpoint_depth": {
+        "date": "",
+        "rec": 0
+      },
+      "price_adj": 0.01,
+      "tas": true,
+      "depth": true
+    }
+  },
+  "db_path": "./tick.db",
+  "sc_root": "/Volumes/[C] Windows 10/SierraChart",
+  "sleep_int": 0.1
 }

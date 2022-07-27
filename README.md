@@ -45,3 +45,38 @@ To find this database useful, you will need to solve a few problems:
 Note: while tick data is available for years, market depth is only available for 30 days. Basically, you have a 30 day window to get the configuration right if you don't want to miss records going forward.
 
 2. You need to keep the data files updated. For `.scid` files, see the section above. For `.depth` files, ???TODO???.
+
+### USAGE
+
+1. Open `config.json` and add any contracts you are interested in loading. See the included example. The checkpoint fields are set automatically, and should be initialized to `0` (or `""` for `checkpoint_depth.date`). The boolean values set whether time and sales, depth, or both will be loaded into the database. Set `price_adj` according to the `Real Time Price Multiplier` value (see discussion in the section above).
+
+2. Set the location of your Sierra Chart installation in `sc_root`.
+
+3. Set the `sleep_int` equal or similar to `Intraday File Flush Time in Milliseconds`.
+
+4. Load data with `python etl.py <loop>`. Where `loop` is 0 (to read and load once, then quite) or 1 (to read/load continuously, as the files are written). Usually 0 is better.
+
+
+### SCHEMA
+
+```
+    <contract_name>_tas
+        timestamp   INTEGER
+        price       REAL
+        qty         INTEGER
+        side        INTEGER
+
+    <contract_name>_depth
+        timestamp   INTEGER
+        command     INTEGER
+        flags       INTEGER
+        num_orders  INTEGER
+        price       REAL
+        quantity    INTEGER
+```
+
+The timestamps are 64-bit unsigned integers, denoting the number of microseconds since `1899-12-30"`. The prices have been adjusted to match what you would expect to see, but otherwise the records are similar to their original forms, which are described here:
+
+time and sales: https://www.sierrachart.com/index.php?page=doc/IntradayDataFileFormat.html
+
+market depth: https://www.sierrachart.com/index.php?page=doc/MarketDepthDataFileFormat.html

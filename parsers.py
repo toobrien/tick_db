@@ -81,12 +81,13 @@ def parse_tas(fd: BinaryIO, checkpoint: int) -> List:
 
 def transform_tas(rs: List, price_adj: float):
 
-    # - truncate microsecond int64 to millisecond datestring
+    # - truncate microsecond int64 to millisecond datestring (optional -- change schema to TEXT type)
     # - adjust price using "real-time price multiplier"
 
     return [
         (
-            (SC_EPOCH + timedelta64(r[tas_rec.timestamp], "us")).astype(datetime).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            #(SC_EPOCH + timedelta64(r[tas_rec.timestamp], "us")).astype(datetime).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            r[tas_rec.timestamp],
             r[tas_rec.price] * price_adj,
             r[tas_rec.qty],
             r[tas_rec.side]
@@ -170,13 +171,14 @@ def parse_depth(fd: BinaryIO, checkpoint: int) -> List:
 
 def transform_depth(rs: List, price_adj: float):
 
-    # - truncate microsecond int64 to millisecond datestring
+    # - truncate microsecond int64 to millisecond datestring (optional -- change schema to TEXT type)
     # - adjust price using "real-time price multiplier"
     # - delete "reserved" value from record
 
     return [
         (
-            (SC_EPOCH + timedelta64(r[depth_rec.timestamp], "us")).astype(datetime).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            #(SC_EPOCH + timedelta64(r[depth_rec.timestamp], "us")).astype(datetime).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            r[depth_rec.timestamp],
             r[depth_rec.command],
             r[depth_rec.flags],
             r[depth_rec.num_orders],

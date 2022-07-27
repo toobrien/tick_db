@@ -1,17 +1,17 @@
 from asyncio    import gather, run, sleep
-from db         import load_depth, load_tas
+from db         import DB_CON, load_depth, load_tas
 from json       import dumps, loads
 from os         import walk
 from parsers    import parse_depth, parse_depth_header, parse_tas, parse_tas_header, transform_tas, transform_depth
 from re         import match
 from sys        import argv
-from typing     import List
+from time       import time
 
 
 CONFIG      = loads(open("./config.json").read())
-CONTRACTS   = CONFIG["CONTRACTS"]
-SLEEP_INT   = CONFIG["SLEEP_INT"]
-SC_ROOT     = CONFIG["SC_ROOT"]
+CONTRACTS   = CONFIG["contracts"]
+SLEEP_INT   = CONFIG["sleep_int"]
+SC_ROOT     = CONFIG["sc_root"]
 
 
 ################
@@ -26,7 +26,7 @@ async def etl_tas_coro(
     loop:       int
 ) -> int:
 
-    fn      = f"{SC_ROOT}/SierraChart/Data/{con_id}.scid"
+    fn      = f"{SC_ROOT}/Data/{con_id}.scid"
     to_seek = checkpoint
     
     with open(fn, "rb") as fd:
@@ -35,9 +35,9 @@ async def etl_tas_coro(
 
         while(True):
 
-            parsed = parse_tas(fd, to_seek)
-            
-            transform_tas(parsed, price_adj)
+            parsed = parse_tas(fd, to_seek)            
+            parsed = transform_tas(parsed, price_adj)
+
             load_tas(con_id, parsed)
             
             checkpoint  +=  len(parsed)
@@ -67,7 +67,7 @@ async def etl_tas(loop: int):
 
             coros.append(etl_tas_coro(con_id, checkpoint, price_adj, loop))
 
-    results = await gather(coros)
+    results = await gather(*coros)
 
     for res in results:
 
@@ -90,7 +90,7 @@ async def etl_depth_coro(
     loop:       int
 ):
 
-    fn      = f"{SC_ROOT}/SierraChart/Data/MarketDepthData/{file}"
+    fn      = f"{SC_ROOT}/Data/MarketDepthData/{file}"
     to_seek = checkpoint
     
     with open(fn, "rb") as fd:
@@ -100,8 +100,8 @@ async def etl_depth_coro(
         while(True):
 
             parsed = parse_depth(fd, to_seek)
-            
-            transform_depth(parsed, price_adj)
+            parsed = transform_depth(parsed, price_adj)
+
             load_depth(con_id, parsed)
             
             checkpoint  +=  len(parsed)
@@ -120,7 +120,7 @@ async def etl_depth_coro(
 
 async def etl_depth(loop: int):
 
-    _, _, files = walk(f"{SC_ROOT}/Data/MarketDepthData")
+    _, _, files = next(walk(f"{SC_ROOT}/Data/MarketDepthData"))
 
     for con_id, dfn in CONTRACTS.items():
 
@@ -156,12 +156,14 @@ async def etl_depth(loop: int):
 
             CONFIG["contracts"][con_id]["checkpoint_depth"]["date"] = to_parse[-1].split(".")[1]
 
-        results = await gather(coros)
+        results = await gather(*coros)
 
         CONFIG["contracts"][con_id]["checkpoint_depth"]["rec"] = results[-1][1]
 
 
 async def main():
+
+    start = time()
 
     loop = int(argv[1])
 
@@ -172,7 +174,11 @@ async def main():
 
     with open("./config.json", "w") as fd:
 
-        fd.write(dumps(CONFIG))
+        fd.write(dumps(CONFIG, indent = 2))
 
+    print(f"elapsed: {time() - start}")
+
+    DB_CON.commit()
+    DB_CON.close()
 
 run(main())
