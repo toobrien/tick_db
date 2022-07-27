@@ -61,6 +61,8 @@ Note: while tick data is available for years, market depth is only available for
 
 ### SCHEMA
 
+Each contract has up to two tables:
+
 ```
     <contract_name>_tas
         timestamp   INTEGER
