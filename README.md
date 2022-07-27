@@ -48,13 +48,15 @@ Note: while tick data is available for years, market depth is only available for
 
 ### USAGE
 
-1. Open `config.json` and add any contracts you are interested in loading. See the included example. The checkpoint fields are set automatically, and should be initialized to `0` (or `""` for `checkpoint_depth.date`). The boolean values set whether time and sales, depth, or both will be loaded into the database. Set `price_adj` according to the `Real Time Price Multiplier` value (see discussion in the section above).
+1. Configure Sierra Chart to record intraday tick files and market depth files for the contracts you want to store. The information above should help, otherwise you can e-mail me.
 
-2. Set the location of your Sierra Chart installation in `sc_root`.
+2. Open `config.json` and add any contracts you are interested in loading. See the included example. The checkpoint fields are set automatically, and should be initialized to `0` (or `""` for `checkpoint_depth.date`). The boolean values set whether time and sales, depth, or both will be loaded into the database. Set `price_adj` according to the `Real Time Price Multiplier` value (see discussion in the section above).
 
-3. Set the `sleep_int` equal or similar to `Intraday File Flush Time in Milliseconds`.
+3. Set the location of your Sierra Chart installation in `sc_root`.
 
-4. Load data with `python etl.py <loop>`. Where `loop` is 0 (to read and load once, then quite) or 1 (to read/load continuously, as the files are written). Usually 0 is better.
+4. Set the `sleep_int` equal or similar to `Intraday File Flush Time in Milliseconds`.
+
+5. Load data with `python etl.py <loop>`. Where `loop` is 0 (to read and load once, then quite) or 1 (to read/load continuously, as the files are written). Usually 0 is better.
 
 
 ### SCHEMA
