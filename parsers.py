@@ -202,7 +202,7 @@ if __name__ == "__main__":
         sc_root     = argv[2]
         contract    = argv[3]
         checkpoint  = int(argv[4])
-        fn          = f"{sc_root}/SierraChart/Data/{contract}.scid"
+        fn          = f"{sc_root}/Data/{contract}.scid"
 
         with open(fn, "rb") as fd:
         
@@ -218,7 +218,7 @@ if __name__ == "__main__":
         contract    = argv[3]
         date        = argv[4]
         checkpoint  = int(argv[5])
-        fn          = f"{sc_root}/SierraChart/Data/MarketDepthData/{contract}.{date}.depth"
+        fn          = f"{sc_root}/Data/MarketDepthData/{contract}.{date}.depth"
 
         with open(fn, "rb") as fd:
 
