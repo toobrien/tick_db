@@ -1,11 +1,9 @@
-from sys import argv, path
-
-path.append("../tick_db")
-
 from datetime   import datetime
 from json       import loads
 from numpy      import datetime64, timedelta64
 from parsers    import parse_tas, parse_tas_header, transform_tas, tas_rec
+from pytz       import timezone
+from sys        import argv
 from time       import sleep
 
 

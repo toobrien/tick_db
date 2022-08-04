@@ -1,7 +1,3 @@
-from sys import argv, path
-
-path.append("../tick_db")
-
 import plotly.graph_objects as go
 
 from bisect     import bisect_left
@@ -9,6 +5,7 @@ from enum       import IntEnum
 from json       import loads
 from numpy      import datetime64, timedelta64
 from parsers    import parse_tas, parse_tas_header, tas_rec
+from sys        import argv
 from time       import sleep, time
 from typing     import List
 
@@ -23,8 +20,8 @@ class r_rot(IntEnum):
 
 
 CONFIG          = loads(open("./config.json").read())
-SC_ROOT         = CONFIG["SC_ROOT"]
-SLEEP_INT       = CONFIG["SLEEP_INT"]
+SC_ROOT         = CONFIG["sc_root"]
+SLEEP_INT       = CONFIG["sleep_int"]
 
 ROTATION_SIDE       = 0
 ROTATION_HIGH       = -float('inf')
