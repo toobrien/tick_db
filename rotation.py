@@ -168,7 +168,7 @@ if __name__ == "__main__":
 
     adj_date = to_sc_ts(start_date) if start_date != "-" else None
 
-    with open(f"{SC_ROOT}/SierraChart/Data/{fn}.scid", "rb") as fd:
+    with open(f"{SC_ROOT}/Data/{fn}.scid", "rb") as fd:
 
         parse_tas_header(fd)
 
