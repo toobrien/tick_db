@@ -14,13 +14,14 @@ class SymIt:
         self,
         symbol:     str,
         date:       str,
+        ts:         int = 0
     ):
 
         self.symbol     = symbol
         self.date       = date
         
         self.sync       = False
-        self.ts         = 0
+        self.ts         = ts
         self.tas_recs   = []
         self.lob_recs   = []
         self.tas_i      = 0
@@ -32,31 +33,41 @@ class SymIt:
         parse_depth_header(self.lob_fd)
 
 
+    def synchronize(self, update: bool):
+
+        if update:
+
+            # obtain any new records
+
+            self.tas_recs += parse_tas(self.tas_fd, 0)
+            self.lob_recs += parse_depth(self.lob_fd, 0)
+
+        self.lob_i  = bisect_right(self.lob_recs, self.ts, key = lambda rec: rec[depth_rec.timestamp])
+        
+        if self.lob_i < len(self.lob_recs):
+        
+            self.ts = self.lob_recs[self.lob_i][depth_rec.timestamp]
+        
+        else:
+
+            self.ts = self.lob_recs[-1][depth_rec.timestamp]
+        
+        self.tas_i  = bisect_right(self.tas_recs, self.ts, key = lambda rec: rec[tas_rec.timestamp])
+
+
     # if you want to re-read the stream from the start, set ts to 0
 
-    def set_ts(self, ts: int):
+    def set_ts(self, ts: int, update: bool = False):
 
         self.ts     = ts
         self.sync   = False
 
+        self.synchronize(update)
+
 
     def __iter__(self):
 
-        # obtain any new reacord before each iteration
-
-        # t0 = time()
-
-        self.tas_recs += parse_tas(self.tas_fd, 0)
-        self.lob_recs += parse_depth(self.lob_fd, 0)
-
-        # print(f"read {len(self.tas_recs)} tas and {len(self.lob_recs)} lob in {time() - t0: 0.2f}")
-
-        if not self.sync:
-
-            self.lob_i  = bisect_right(self.lob_recs, self.ts, key = lambda rec: rec[depth_rec.timestamp])
-            self.ts     = self.lob_recs[self.lob_i][depth_rec.timestamp]
-            self.tas_i  = bisect_right(self.tas_recs, self.ts, key = lambda rec: rec[tas_rec.timestamp])
-            self.sync   = True
+        self.synchronize(update = True)
         
         return self
 

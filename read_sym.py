@@ -28,7 +28,7 @@ def process(it):
 
             depth_recs += 1
 
-    print(f"lob_recs, tas_recs: {depth_recs} , {tas_recs} ({time() - t1: 0.2f}s)")
+    print(f"lob_recs, tas_recs: {depth_recs} , {tas_recs} ( {time() - t1: 0.2f}s )")
 
 
 if __name__ == "__main__":
@@ -40,10 +40,11 @@ if __name__ == "__main__":
 
     process(it) # process records
 
-    '''
+    '''    
     process(it) # nothing happens unless new market data; iterator at finish
     
     it.set_ts(0)
 
-    process(it) # stream reprocessed
+    process(it) # stream reprocessed without updating
     '''
+    

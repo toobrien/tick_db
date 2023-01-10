@@ -84,3 +84,7 @@ The timestamps are 64-bit unsigned integers, denoting the number of microseconds
 time and sales: https://www.sierrachart.com/index.php?page=doc/IntradayDataFileFormat.html
 
 market depth: https://www.sierrachart.com/index.php?page=doc/MarketDepthDataFileFormat.html
+
+### Additional utilities
+
+`sym_it.py`: an interator that synchronizes the limit order book and time and sales for a single symbol, on a single day. Given a symbol and date in `yyyy-mm-dd` format, the iterator will serve order book updates and trades in the sequence they occur. See `parsers.tas_rec` and `parsers.depth_rec` for the format of trade and book update records, respectively. The iterator is indexed by a 64-bit timestamp, which is microseconds since `1899-12-30`. User `SymIt.set_ts` to re-index the iterator with a new timestamp. To reset the iterator after one use, use `SymIt.set_ts(0)`. The iterator will attempt to read new records from the `.scid` and `.depth` files on each use.
