@@ -1,12 +1,14 @@
 from parsers    import depth_rec, tas_rec
 from sym_it     import SymIt
 from sys        import argv
-
+from time       import time
 
 def process(it):
 
     tas_recs    = 0
     depth_recs  = 0
+
+    t1 = time()
 
     for rec in it:
 
@@ -22,7 +24,7 @@ def process(it):
 
             depth_recs += 1
 
-    print(f"lob_recs, tas_recs: {depth_recs} , {tas_recs}")
+    print(f"lob_recs, tas_recs: {depth_recs} , {tas_recs} ({time() - t1: 0.2f}s)")
 
 
 if __name__ == "__main__":
@@ -30,7 +32,10 @@ if __name__ == "__main__":
     sym         = argv[1]
     date        = argv[2]
 
+    t0 = time()
     it = SymIt(sym, date)
+
+    print(f"initialize iterator: {time() - t0: 0.2f}s")
 
     process(it) # process records
 

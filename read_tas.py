@@ -7,7 +7,7 @@ from time       import sleep
 
 
 CONFIG      = loads(open("./config.json").read())
-SC_ROOT     = CONFIG["sc_root"] 
+SC_ROOT     = CONFIG["sc_root"]
 SLEEP_INT   = CONFIG["sleep_int"]
 SC_EPOCH    = datetime64("1899-12-30")
 
