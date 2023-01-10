@@ -56,7 +56,7 @@ Note: while tick data is available for years, market depth is only available for
 
 4. Set the `sleep_int` equal or similar to `Intraday File Flush Time in Milliseconds`.
 
-5. Load data with `python etl.py <loop>`. Where `loop` is 0 (to read and load once, then quite) or 1 (to read/load continuously, as the files are written). Usually 0 is better.
+5. Load data with `python etl.py <loop>`. Where `loop` is 0 (to read and load once, then quit) or 1 (to read/load continuously, as the files are written). Usually 0 is better.
 
 
 ### SCHEMA
