@@ -22,8 +22,7 @@ def process(it):
 
             depth_recs += 1
 
-    print(f"tas_recs: {tas_recs}")
-    print(f"lob_recs: {depth_recs}")
+    print(f"lob_recs, tas_recs: {depth_recs} , {tas_recs}")
 
 
 if __name__ == "__main__":
@@ -35,7 +34,7 @@ if __name__ == "__main__":
 
     process(it) # process records
 
-    process(it) # nothing happens, iterator at finish
+    process(it) # nothing happens unless new market data; iterator at finish
     
     it.set_ts(0)
 
