@@ -2,7 +2,6 @@ from datetime   import datetime
 from json       import loads
 from numpy      import datetime64, timedelta64
 from parsers    import parse_tas, parse_tas_header, transform_tas, tas_rec
-from pytz       import timezone
 from sys        import argv
 from time       import sleep
 
@@ -13,7 +12,7 @@ SLEEP_INT   = CONFIG["sleep_int"]
 SC_EPOCH    = datetime64("1899-12-30")
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
 
     fn          = argv[1]
     price_adj   = float(argv[2])

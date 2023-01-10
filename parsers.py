@@ -1,6 +1,5 @@
-from datetime   import datetime
 from enum       import IntEnum
-from numpy      import datetime64, timedelta64
+from numpy      import datetime64
 from struct     import calcsize, Struct
 from sys        import argv
 from time       import time
