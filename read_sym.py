@@ -16,11 +16,15 @@ def process(it):
 
             # process tas rec
 
+            print(f"tas: {rec}")
+
             tas_recs += 1
 
         else:
 
             # process depth rec
+
+            print(f"lob: {rec}")
 
             depth_recs += 1
 
@@ -32,15 +36,14 @@ if __name__ == "__main__":
     sym         = argv[1]
     date        = argv[2]
 
-    t0 = time()
     it = SymIt(sym, date)
-
-    print(f"initialize iterator: {time() - t0: 0.2f}s")
 
     process(it) # process records
 
+    '''
     process(it) # nothing happens unless new market data; iterator at finish
     
     it.set_ts(0)
 
     process(it) # stream reprocessed
+    '''

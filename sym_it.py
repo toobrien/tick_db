@@ -74,7 +74,7 @@ class SymIt:
             self.ts     =   res[depth_rec.timestamp]
             self.lob_i  +=  1
 
-        elif tas_i < len(tas_recs):
+        elif lob_i < len(lob_recs):
 
             res         =   tas_recs[tas_i]
             self.ts     =   res[tas_rec.timestamp]
