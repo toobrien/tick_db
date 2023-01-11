@@ -1,5 +1,6 @@
 from enum       import IntEnum
 from numpy      import datetime64
+from os         import fstat, fsync
 from struct     import calcsize, Struct
 from sys        import argv
 from time       import time
@@ -55,6 +56,8 @@ def parse_tas_header(fd: BinaryIO)->tuple:
 
 
 def parse_tas(fd: BinaryIO, checkpoint: int) -> List:
+
+    fstat(fd.fileno())
 
     tas_recs = []
 
@@ -152,6 +155,8 @@ def parse_depth(fd: BinaryIO, checkpoint: int) -> List:
         header_bytes    = fd.read(HEADER_LEN)
         header          = Struct(HEADER_FMT).unpack_from(header_bytes)
     '''
+
+    fstat(fd.fileno())
 
     if checkpoint:
     

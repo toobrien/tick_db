@@ -13,5 +13,5 @@
   },
   "db_path": "./tick.db",
   "sc_root": "/Volumes/[C] Windows 10/SierraChart",
-  "sleep_int": 0.1
+  "sleep_int": 0.01
 }

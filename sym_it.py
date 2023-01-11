@@ -35,6 +35,8 @@ class SymIt:
 
     def synchronize(self, update: bool):
 
+        # t0 = time()
+
         if update:
 
             # obtain any new records
@@ -42,7 +44,7 @@ class SymIt:
             self.tas_recs += parse_tas(self.tas_fd, 0)
             self.lob_recs += parse_depth(self.lob_fd, 0)
 
-        self.lob_i  = bisect_right(self.lob_recs, self.ts, key = lambda rec: rec[depth_rec.timestamp])
+        self.lob_i = bisect_right(self.lob_recs, self.ts, key = lambda rec: rec[depth_rec.timestamp])
         
         if self.lob_i < len(self.lob_recs):
         
@@ -52,7 +54,9 @@ class SymIt:
 
             self.ts = self.lob_recs[-1][depth_rec.timestamp]
         
-        self.tas_i  = bisect_right(self.tas_recs, self.ts, key = lambda rec: rec[tas_rec.timestamp])
+        self.tas_i = bisect_right(self.tas_recs, self.ts, key = lambda rec: rec[tas_rec.timestamp])
+
+        # print(f"synchronize: {time() - t0: 0.2f}")
 
 
     # if you want to re-read the stream from the start, set ts to 0
@@ -79,17 +83,20 @@ class SymIt:
         lob_i       = self.lob_i
         lob_recs    = self.lob_recs
 
-        if lob_i < len(lob_recs) and lob_recs[lob_i][depth_rec.timestamp] < tas_recs[tas_i][tas_rec.timestamp]:
+        if  lob_i < len(lob_recs):
+            
+            if  tas_i >= len(tas_recs) or \
+                lob_recs[lob_i][depth_rec.timestamp] < tas_recs[tas_i][tas_rec.timestamp]:
 
-            res         =   lob_recs[lob_i]
-            self.ts     =   res[depth_rec.timestamp]
-            self.lob_i  +=  1
+                res         =   lob_recs[lob_i]
+                self.ts     =   res[depth_rec.timestamp]
+                self.lob_i  +=  1
 
-        elif lob_i < len(lob_recs):
+            else:
 
-            res         =   tas_recs[tas_i]
-            self.ts     =   res[tas_rec.timestamp]
-            self.tas_i  +=  1
+                res         =   tas_recs[tas_i]
+                self.ts     =   res[tas_rec.timestamp]
+                self.tas_i  +=  1
 
         else:
 
