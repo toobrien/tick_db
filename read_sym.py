@@ -40,8 +40,8 @@ def process(it):
 
 if __name__ == "__main__":
 
-    sym         = argv[1]
-    date        = argv[2]
+    sym     = argv[1]
+    date    = argv[2]
 
     it = SymIt(sym, date)
 
