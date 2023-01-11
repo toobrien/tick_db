@@ -42,20 +42,46 @@ if __name__ == "__main__":
 
     sym     = argv[1]
     date    = argv[2]
+    test    = int(argv[3])
 
     it = SymIt(sym, date)
 
-    while True:
+    if test == 1:
 
+        while True:
+
+            process(it)
+
+            sleep(sleep_int)
+
+    elif test == 2:
+    
         process(it)
+        
+        process(it) # nothing happens unless new market data; iterator at finish
+        
+        it.set_ts(0)
 
-        sleep(sleep_int)
-
-    '''    
-    process(it) # nothing happens unless new market data; iterator at finish
+        process(it) # stream reprocessed without updating
     
-    it.set_ts(0)
+    elif test == 3:
 
-    process(it) # stream reprocessed without updating
-    '''
-    
+        recs = it.all()
+
+        count = 0
+
+        for rec in recs:
+
+            count += 1
+
+            print(rec)
+
+        print(f"total records: {count}")
+
+    elif test == 4:
+
+        recs = it[-10:]
+
+        for rec in recs:
+
+            print(rec)

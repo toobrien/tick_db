@@ -71,7 +71,7 @@ class SymIt:
 
     def __iter__(self):
 
-        self.synchronize(update = True)
+        self.synchronize(True)
         
         return self
 
@@ -105,4 +105,29 @@ class SymIt:
         return res
 
 
+    # return all records, in sequence
+    # if the iterator has already loaded records, do not update
 
+    def all(self):
+
+        res = []
+
+        old_ts = self.ts
+        update = not (self.lob_recs or self.tas_recs)
+
+        self.set_ts(0, update)
+
+        for rec in self:
+
+            res.append(rec)
+
+        self.set_ts(old_ts)
+
+        return res
+
+
+    # slice operator
+
+    def __getitem__(self, slice):
+
+        return self.all()[slice]

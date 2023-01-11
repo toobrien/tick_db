@@ -1,6 +1,6 @@
 from enum       import IntEnum
 from numpy      import datetime64
-from os         import fstat, fsync
+from os         import fstat
 from struct     import calcsize, Struct
 from sys        import argv
 from time       import time
