@@ -50,8 +50,6 @@ if __name__ == "__main__":
 
         sleep(sleep_int)
 
-
-
     '''    
     process(it) # nothing happens unless new market data; iterator at finish
     
