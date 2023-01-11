@@ -126,8 +126,36 @@ class SymIt:
         return res
 
 
-    # slice operator
+    # slice operator: accepts either indexes of the sequence array, or timestamps
+    # does not mutate list unless initial records haven't been loaded
 
     def __getitem__(self, slice):
 
-        return self.all()[slice]
+        res = None
+
+        if slice.start < (len(self.lob_recs)):
+
+            # should probably replace this test with slice.start < SC_EPOCH
+
+            res = self.all()[slice]
+
+        else:
+
+            # timestamp index
+
+            old_ts = self.ts
+
+            update = not (self.lob_recs or self.tas_recs)
+
+            self.set_ts(self.start, update)
+
+            for rec in self:
+
+                if  len(rec) == len(depth_rec) and rec[depth_rec.timestamp] < slice.end or \
+                    rec[tas_rec.timestamp] < slice.end:
+
+                    res.append(rec)
+            
+            self.set_ts(old_ts)
+
+        return res
