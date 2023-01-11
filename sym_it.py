@@ -4,7 +4,7 @@ from parsers    import depth_rec, tas_rec, parse_tas, parse_tas_header, parse_de
 from time       import time
 
 
-SC_ROOT     = loads(open("./config.json").read())["sc_root"]
+SC_ROOT = loads(open("./config.json").read())["sc_root"]
 
 
 class SymIt:
