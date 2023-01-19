@@ -1,7 +1,7 @@
-from bisect     import bisect_right
-from json       import loads
-from parsers    import depth_rec, tas_rec, parse_tas, parse_tas_header, parse_depth, parse_depth_header
-from time       import time
+from bisect     import  bisect_right
+from json       import  loads
+from parsers    import  depth_rec, tas_rec, parse_tas, parse_tas_header, parse_depth, parse_depth_header
+from time       import  time
 
 
 SC_ROOT = loads(open("./config.json").read())["sc_root"]
@@ -131,7 +131,7 @@ class SymIt:
 
     def __getitem__(self, slice):
 
-        res = None
+        res = []
 
         if slice.start < (len(self.lob_recs)):
 
@@ -147,12 +147,12 @@ class SymIt:
 
             update = not (self.lob_recs or self.tas_recs)
 
-            self.set_ts(self.start, update)
+            self.set_ts(slice.start, update)
 
             for rec in self:
 
-                if  len(rec) == len(depth_rec) and rec[depth_rec.timestamp] < slice.end or \
-                    rec[tas_rec.timestamp] < slice.end:
+                if  len(rec) == len(depth_rec) and rec[depth_rec.timestamp] <= slice.stop or \
+                    rec[tas_rec.timestamp] <= slice.stop:
 
                     res.append(rec)
             
