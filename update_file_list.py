@@ -104,7 +104,3 @@ if __name__ == "__main__":
                             contract_id = pattern.format(MYY = myy, T = type, S = str(i).rjust(fill_width, "0"))
 
                             print(contract_id)
-
-
-
-
