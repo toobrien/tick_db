@@ -26,7 +26,7 @@ Depth records contain commands to modify the state of an order book. For example
 
 ### Keeping .scid files up-to-date
 
-You can keep `.scid` files up to date simply by connecting to a data feed once per day. Sierra Chart will download any missing records as far back as `Maximum Historical Intraday Days to Download`, provided the symbol you are interested in is open in a chart or DOM.
+You can keep `.scid` files up to date simply by connecting to a data feed once per day. Sierra Chart will download any missing records as far back as `Maximum Historical Intraday Days to Download`, provided the symbol you are interested in is open in a chart.
 
 https://www.sierrachart.com/index.php?page=doc/DataSourceSettings.php#MaximumHistoricalIntradayDaysToDownloadSection
 
@@ -35,6 +35,12 @@ https://www.sierrachart.com/index.php?page=doc/HistoricalIntradayData.html#Retry
 After the download is complete, you can force Sierra Chart to flush new, incoming records to disk using the `Intraday File Flush Time in Milliseconds` setting. By default, they are written every five seconds:
 
 https://www.sierrachart.com/index.php?page=doc/IntradayDataFileFormat.html#GeneralInformation
+
+Because it is tedious to track a large number of symbols using charts, you may want to use the "Intraday File Update List" feature:
+
+https://www.sierrachart.com/index.php?page=doc/GlobalSettingsMenu.html#IntradayFileUpdateList
+
+To generate a list of file names for bulk-download, you can use `update_file_list.py`. At the top of the file you will see some `SYMBOLS` configured. You can add to, disable, or remove from this list whatever contracts you prefer, then run. The program will generate all files between the start and end contract expiries that you supply on the command line.  
 
 ### Configuration
 
